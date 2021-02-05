@@ -212,7 +212,6 @@ func verifyBallotOverallProofs(b Ballot, elec Election) error {
 	for ia, a := range b.Answers {
 		// [4.12] Proofs
 		// P = "g,y,alpha,beta,aSum,bSum"
-		//P := fmt.Sprintf("%s,%s,", g, y)
 
 		// Homomorphic Sum
 		aSum := big.NewInt(1)
@@ -281,8 +280,7 @@ func verifyBallotOverallProofs(b Ballot, elec Election) error {
 		max := elec.Questions[ia].Max
 
 		for k := min; k <= max; k++ {
-			//im := k - (max - min) - 1 // challenge, response array index
-			im := k - min
+			im := k - min // challenge, response array index
 			if elec.Questions[ia].Blank == true {
 				im += 1 // Blank vote is stored in head of array
 			}
