@@ -9,7 +9,7 @@ import (
 
 func verifyResponseToElection(b Ballot, uuid string, hash string) error {
 	// [4.14] fingerprint of election
-        //  HJSON(J) = BASE64(SHA256(J))
+	//  HJSON(J) = BASE64(SHA256(J))
 	// Computed in main function:
 	//   selec, _ := json.Marshal(elec)
 	//   hashS := sha256.Sum256(selec)
@@ -359,4 +359,18 @@ func verifyBallotOverallProofs(b Ballot, elec Election) error {
 	}
 
 	return nil // no error
+}
+
+func verifyDecryptedResults(a, b [][]int) error {
+	if len(a) != len(b) {
+		return fmt.Errorf(" not matching length\n   %+v\n   %+v\n", a, b)
+	}
+	for i1, v1 := range a {
+		for i2, v2 := range v1 {
+			if v2 != b[i1][i2] {
+				return fmt.Errorf(" not matching values\n   %+v\n   %+v\n", a, b)
+			}
+		}
+	}
+	return nil
 }

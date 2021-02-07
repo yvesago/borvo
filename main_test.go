@@ -5,26 +5,10 @@ import (
 	"encoding/base64"
 	"encoding/json"
 
-	"fmt"
+//	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
-func Equal(a, b [][]int) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i1, v1 := range a {
-		for i2, v2 := range v1 {
-			if v2 != b[i1][i2] {
-				fmt.Printf("a: %+v\n", a)
-				fmt.Printf("b: %+v\n", b)
-				return false
-			}
-		}
-	}
-	return true
-}
 
 func TestVerify(t *testing.T) {
 	Test = true
@@ -69,6 +53,7 @@ func TestVerify(t *testing.T) {
 	assert.Equal(t, 4, len(results), "4 Questions in Count")
 	assert.Equal(t, 4, len(results[0]), "4 Answers in first Question")
 
-	assert.Equal(t, true, Equal(results, res.Result), "Same calulated results")
+	err = verifyDecryptedResults(results, res.Result)
+	assert.Equal(t, nil, err, "Same calculated results")
 
 }

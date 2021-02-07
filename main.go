@@ -90,7 +90,6 @@ func readData(files [4]string, dir string) (Election, Result, []Ballot) {
 	return elec, res, ballots
 }
 
-
 /**
  main cli
 **/
@@ -241,8 +240,12 @@ ______
 	count := Count(elec, ballots)
 	err, results := DecryptResults(elec, res, count)
 	if err == nil {
-		fmt.Printf("\nDecrypted Results:\n\n")
-		PrintNewResults(elec, results)
+		fmt.Printf("\nDecrypted Results: ")
+		e := verifyDecryptedResults(results, res.Result)
+		if e == nil {
+			color.Printf("<suc>OK</>\n\n")
+			PrintNewResults(elec, results)
+		}
 	}
 
 	fmt.Println()
