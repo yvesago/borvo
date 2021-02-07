@@ -1,11 +1,11 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
-	"encoding/json"
-
+//	"crypto/sha256"
+//	"encoding/base64"
+//	"encoding/json"
 //	"fmt"
+
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -24,10 +24,10 @@ func TestVerify(t *testing.T) {
 	//s, _ = json.MarshalIndent(res, "", " ")
 	//fmt.Print("\n==Résultats==\n", string(s))
 
-	jsonElec, _ := json.Marshal(elec)
-	//fmt.Println(string(selec))
-	hashJ := sha256.Sum256(jsonElec)
-	HJSON := base64.RawStdEncoding.EncodeToString(hashJ[:])
+	HJSON, _ :=describeElection(elec)
+	//jsonElec, _ := json.Marshal(elec)
+	//hashJ := sha256.Sum256(jsonElec)
+	//HJSON := base64.RawStdEncoding.EncodeToString(hashJ[:])
 
 	b := ballots[0]
 	err := verifyResponseToElection(b, elec.UUID, HJSON)
