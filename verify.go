@@ -7,6 +7,23 @@ import (
 	"strings"
 )
 
+func verifyResponseToElection(b Ballot, uuid string, hash string) error {
+	// [4.14] fingerprint of election
+        //  HJSON(J) = BASE64(SHA256(J))
+	// Computed in main function:
+	//   selec, _ := json.Marshal(elec)
+	//   hashS := sha256.Sum256(selec)
+	//   fmt.Println(base64.RawStdEncoding.EncodeToString(hashS[:]))
+	if b.ElectionUUID != uuid {
+		return fmt.Errorf(" Ballot with Election UUID %s\n  from wrong Election\n", b.ElectionUUID)
+	}
+	if b.ElectionHash != hash {
+		return fmt.Errorf(" Ballot with Election Hash %s\n  from wrong Election\n", b.ElectionHash)
+	}
+	OK("")
+	return nil // no error
+}
+
 func verifyBallotSignature(b Ballot, elec Election) error {
 	g, _ := new(big.Int).SetString(elec.PublicKey.Group.G, 10)
 	prime, _ := new(big.Int).SetString(elec.PublicKey.Group.P, 10)

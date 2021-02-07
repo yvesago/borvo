@@ -57,7 +57,7 @@ func Count(elec Election, ballots []Ballot) [][]choice {
 }
 
 // Decrypt with partial decryption factors
-func DecyptResults(elec Election, res Result, newCount [][]choice) (error, [][]int) {
+func DecryptResults(elec Election, res Result, newCount [][]choice) (error, [][]int) {
 
 	prime, _ := new(big.Int).SetString(elec.PublicKey.Group.P, 10)
 	g, _ := new(big.Int).SetString(elec.PublicKey.Group.G, 10)

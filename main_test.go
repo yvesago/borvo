@@ -1,7 +1,10 @@
 package main
 
 import (
-	//"encoding/json"
+	"crypto/sha256"
+	"encoding/base64"
+	"encoding/json"
+
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -37,10 +40,16 @@ func TestVerify(t *testing.T) {
 	//s, _ = json.MarshalIndent(res, "", " ")
 	//fmt.Print("\n==Résultats==\n", string(s))
 
-	b := ballots[0]
-	assert.Equal(t, b.ElectionUUID, elec.UUID, "Verify UUID")
+	jsonElec, _ := json.Marshal(elec)
+	//fmt.Println(string(selec))
+	hashJ := sha256.Sum256(jsonElec)
+	HJSON := base64.RawStdEncoding.EncodeToString(hashJ[:])
 
-	err := verifyBallotSignature(b, elec)
+	b := ballots[0]
+	err := verifyResponseToElection(b, elec.UUID, HJSON)
+	assert.Equal(t, nil, err, "Verify UUID and Hash")
+
+	err = verifyBallotSignature(b, elec)
 	assert.Equal(t, nil, err, "verifyBallotSignature")
 
 	err = verifyBallotBlankProofs(b, elec)
@@ -55,7 +64,7 @@ func TestVerify(t *testing.T) {
 	assert.Equal(t, 4, len(count), "4 Questions in Count")
 	assert.Equal(t, 4, len(count[0]), "4 Answers in first Question")
 
-	err, results := DecyptResults(elec, res, count)
+	err, results := DecryptResults(elec, res, count)
 	assert.Equal(t, nil, err, "DecryptAndPrint")
 	assert.Equal(t, 4, len(results), "4 Questions in Count")
 	assert.Equal(t, 4, len(results[0]), "4 Answers in first Question")

@@ -30,7 +30,7 @@ type Election struct {
 	} `json:"public_key"`
 	Questions []struct {
 		Answers  []string `json:"answers"`
-		Blank    bool     `json:"blank"`
+		Blank    bool     `json:"blank,omitempty"`
 		Min      int      `json:"min"`
 		Max      int      `json:"max"`
 		Question string   `json:"question"`

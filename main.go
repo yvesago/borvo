@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -20,6 +22,10 @@ var (
 	Version string
 	Test    bool
 )
+
+/**
+ Tools
+**/
 
 func OK(msg string) {
 	if msg != "" {
@@ -83,6 +89,11 @@ func readData(files [4]string, dir string) (Election, Result, []Ballot) {
 
 	return elec, res, ballots
 }
+
+
+/**
+ main cli
+**/
 
 func main() {
 	banner := `
@@ -160,6 +171,12 @@ ______
 
 	elec, res, ballots := readData(files, dir)
 
+	// [4.14] fingerprint of election
+	//  HJSON(J) = BASE64(SHA256(J))
+	J, _ := json.Marshal(elec)
+	hashJ := sha256.Sum256(J)
+	HJSON := base64.RawStdEncoding.EncodeToString(hashJ[:])
+
 	/**
 	Count tests for progression bar
 	**/
@@ -172,7 +189,7 @@ ______
 		tests += btest
 	}
 	tests = tests * len(ballots)
-	tests += 2 * len(ballots) // Sign + overall
+	tests += 3 * len(ballots) // Hash election + Signature + overall
 
 	bar = progressbar.Default(int64(tests))
 
@@ -186,18 +203,19 @@ ______
 	fmt.Println()
 	fmt.Printf("ID : %s\n", elec.UUID)
 	fmt.Printf("Admin : %s\n", elec.Administrator)
-	fmt.Printf("Credential Authority : %s\n\n", elec.CredentialAuthority)
+	fmt.Printf("Credential Authority : %s\n", elec.CredentialAuthority)
+	fmt.Printf("Fingerprint : %s\n\n", HJSON)
 	fmt.Printf("Question(s) : %d\n", len(elec.Questions))
 	color.Printf("Ballots : <suc>%d</>\n", len(ballots))
 
 	// Ballots verifications
 	fmt.Printf("\nBallots verifications:\n\n")
 	for _, b := range ballots {
-		// Ballots verifications
-		if b.ElectionUUID != elec.UUID {
-			Error(fmt.Sprintf("Ballot UUID «%s» doesn't match election UUID «%s»", b.ElectionUUID, elec.UUID))
+		err := verifyResponseToElection(b, elec.UUID, HJSON)
+		if err != nil {
+			Error(err.Error())
 		}
-		err := verifyBallotSignature(b, elec)
+		err = verifyBallotSignature(b, elec)
 		if err != nil {
 			Error(err.Error())
 		}
@@ -221,7 +239,7 @@ ______
 	// Count, Decrypt, Print
 	fmt.Printf("\nBallots homomorphic count ...\n")
 	count := Count(elec, ballots)
-	err, results := DecyptResults(elec, res, count)
+	err, results := DecryptResults(elec, res, count)
 	if err == nil {
 		fmt.Printf("\nDecrypted Results:\n\n")
 		PrintNewResults(elec, results)
