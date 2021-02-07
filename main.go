@@ -242,10 +242,11 @@ ______
 	if err == nil {
 		fmt.Printf("\nDecrypted Results: ")
 		e := verifyDecryptedResults(results, res.Result)
-		if e == nil {
-			color.Printf("<suc>OK</>\n\n")
-			PrintNewResults(elec, results)
+		if e != nil {
+			Error(e.Error())
 		}
+		color.Printf("<suc>OK</>\n\n")
+		PrintNewResults(elec, results)
 	}
 
 	fmt.Println()

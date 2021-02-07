@@ -363,12 +363,15 @@ func verifyBallotOverallProofs(b Ballot, elec Election) error {
 
 func verifyDecryptedResults(a, b [][]int) error {
 	if len(a) != len(b) {
-		return fmt.Errorf(" not matching length\n   %+v\n   %+v\n", a, b)
+		return fmt.Errorf(" not matching length\n    decrypted: %+v\n results.json: %+v\n", a, b)
 	}
 	for i1, v1 := range a {
 		for i2, v2 := range v1 {
+			if len(v1) != len(b[i1]) {
+				return fmt.Errorf(" not matching length\n    decrypted: %+v\n results.json: %+v\n", a, b)
+			}
 			if v2 != b[i1][i2] {
-				return fmt.Errorf(" not matching values\n   %+v\n   %+v\n", a, b)
+				return fmt.Errorf(" not matching values\n    decrypted: %+v\n results.json: %+v\n", a, b)
 			}
 		}
 	}
