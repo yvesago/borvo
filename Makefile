@@ -1,5 +1,5 @@
 
-VERSION=v0.1
+VERSION=$(shell git describe --abbrev=0 --tags)
 
 BUILD=$(shell git rev-parse --short HEAD)
 DATE=$(shell date +%FT%T%z)
