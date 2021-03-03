@@ -70,9 +70,6 @@ func verifyBallotBlankProofs(b Ballot, elec Election) error {
 
 	bsPK, _ := new(big.Int).SetString(b.Signature.PublicKey, 10)
 
-	// [4.12] Proofs
-	P := fmt.Sprintf("%s,%s,", g, y)
-
 	for i, a := range b.Answers {
 		if a.BlankProof == nil { // or elec.Questions[i].Blank == false
 			//OK("")
@@ -101,6 +98,7 @@ func verifyBallotBlankProofs(b Ballot, elec Election) error {
 
 		// [4.12] Proofs
 		// P = "g,y,a0,b0,aS,bS"
+		P := fmt.Sprintf("%s,%s,", g, y)
 		P += fmt.Sprintf("%s,%s,%s,%s", a0, b0, aSum, bSum)
 
 		// [4.12.3] Verifyink blank_proof

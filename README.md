@@ -53,6 +53,9 @@ $ make
 
 ## Changelog
 
+v0.2.1:
+  * fix bug in P init
+
 v0.2:
   * Verify single online balot
   * Add election fingerprint verification
