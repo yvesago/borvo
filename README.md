@@ -53,6 +53,9 @@ $ make
 
 ## Changelog
 
+v0.2.2:
+  * fix bug in Partial Decryptions with many trustees
+
 v0.2.1:
   * fix bug in P init
 
@@ -64,6 +67,8 @@ v0.2:
 ## TODO
 
 * Add verification with proof of decryption
+* Add test for partial decryption with many trustees
+* Add partial decryption with threshold support
 
 
 ## Licence

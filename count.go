@@ -91,7 +91,6 @@ func DecryptResults(elec Election, res Result, newCount [][]choice) (error, [][]
 	// TODO verifyDecryptionFactors
 
 	for i, _ := range newCount {
-		partial := res.PartialDecryptions[0]
 		if elec.Questions[i].Blank {
 			readAlpha, _ := new(big.Int).SetString(res.EncryptedTally[i][0].Alpha, 10)
 			readBeta, _ := new(big.Int).SetString(res.EncryptedTally[i][0].Beta, 10)
@@ -102,8 +101,12 @@ func DecryptResults(elec Election, res Result, newCount [][]choice) (error, [][]
 			}
 			// [4.18]  Election result
 			// result = logg(beta/f)
-			f, _ := new(big.Int).SetString(partial.DecryptionFactors[i][0], 10)
-			t := new(big.Int).Mul(beta, new(big.Int).ModInverse(f, prime))
+			F := big.NewInt(1)
+			for _, partial := range res.PartialDecryptions {
+				f, _ := new(big.Int).SetString(partial.DecryptionFactors[i][0], 10)
+				F = F.Mul(F, f).Mod(F, prime)
+			}
+			t := new(big.Int).Mul(beta, new(big.Int).ModInverse(F, prime))
 			t = t.Mod(t, prime)
 			newResults[i][0] = DL[t.String()]
 		}
@@ -123,8 +126,12 @@ func DecryptResults(elec Election, res Result, newCount [][]choice) (error, [][]
 			}
 			// [4.18]  Election result
 			// result = logg(beta/f)
-			f, _ := new(big.Int).SetString(partial.DecryptionFactors[i][ci+bpos], 10)
-			t := new(big.Int).Mul(beta, new(big.Int).ModInverse(f, prime))
+			F := big.NewInt(1)
+			for _, partial := range res.PartialDecryptions {
+				f, _ := new(big.Int).SetString(partial.DecryptionFactors[i][ci+bpos], 10)
+				F = F.Mul(F, f).Mod(F, prime)
+			}
+			t := new(big.Int).Mul(beta, new(big.Int).ModInverse(F, prime))
 			t = t.Mod(t, prime)
 			newResults[i][ci+bpos] = DL[t.String()]
 		}
